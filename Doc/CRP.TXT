@@ -1,0 +1,22 @@
+BEGIN REPORT
+Instrument SN: 42092
+Software version: 9.22
+Firmware version: V1.4
+Module number: 1
+Module SN: 37741
+Results file: 2017-04-01_08-34-16_CRP(20).DBG
+Patient Name: n/a
+Sample Type: È«Ñª
+Tested By: jyk
+Specimen ID: 1001
+Assay ID: 30
+Test name: CRP
+Lot Number: 020
+Lot Expiration: 2018-4-7
+Whole blood: Yes
+Test start time: 2017-4-1 8:28
+Test finish time: 2017-4-1 8:34
+CRP Interpretation: 
+1001 CRP: CRP  =  5.38 hs-CRP > 5 ¡ü mg/L
+Comment: 
+END REPORT

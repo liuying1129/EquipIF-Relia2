@@ -1,0 +1,21 @@
+BEGIN REPORT
+Instrument SN: 42092
+Software version: 9.22
+Firmware version: V1.4
+Module number: 4
+Module SN: 37735
+Results file: 2017-04-01_14-26-05_cTnI(85).DBG
+Patient Name: n/a
+Sample Type: ÑªÇå/Ñª½¬
+Tested By: jyk
+Specimen ID: 302
+Assay ID: 10
+Test name: cTnI
+Lot Number: 085
+Lot Expiration: 2018-2-9
+Test start time: 2017-4-1 14:11
+Test finish time: 2017-4-1 14:26
+cTnI Interpretation: 
+302 cTnI: <0.001 ng/ml
+Comment: 
+END REPORT

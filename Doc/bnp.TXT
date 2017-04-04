@@ -1,0 +1,21 @@
+BEGIN REPORT
+Instrument SN: 42092
+Software version: 9.22
+Firmware version: V1.4
+Module number: 3
+Module SN: 37734
+Results file: 2017-04-01_14-05-47_NT-proBNP(220).DBG
+Patient Name: n/a
+Sample Type: ÑªÇå/Ñª½¬
+Tested By: jyk
+Specimen ID: 201
+Assay ID: 29
+Test name: NT-proBNP
+Lot Number: 220
+Lot Expiration: 2018-1-24
+Test start time: 2017-4-1 13:51
+Test finish time: 2017-4-1 14:05
+NT-proBNP Interpretation: 
+201 NT-proBNP: 1086.43 pg/ml
+Comment: 
+END REPORT
