@@ -83,7 +83,6 @@ const
 var
   ConnectString:string;
   GroupName:string;//
-  SpecType:string ;//
   SpecStatus:string ;//
   CombinID:string;//
   LisFormCaption:string;//
@@ -240,7 +239,6 @@ begin
 
   GroupName:=trim(ini.ReadString(IniSection,'工作组',''));
   EquipChar:=trim(uppercase(ini.ReadString(IniSection,'仪器字母','')));//读出来是大写就万无一失了
-  SpecType:=ini.ReadString(IniSection,'默认样本类型','');
   SpecStatus:=ini.ReadString(IniSection,'默认样本状态','');
   CombinID:=ini.ReadString(IniSection,'组合项目代码','');
 
@@ -408,7 +406,6 @@ begin
       '工作组'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '仪器字母'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '检验系统窗体标题'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
-      '默认样本类型'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '默认样本状态'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '组合项目代码'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '开机自动运行'+#2+'CheckListBox'+#2+#2+'1'+#2+#2+#3+
@@ -463,31 +460,58 @@ procedure TfrmMain.ComDataPacket1Packet(Sender: TObject;
   const Str: String);
 VAR
   ls:TStrings;
-  i:integer;
+  i,m,n:integer;
   SpecNo:string;
   dlttype:string;
   sValue:string;
   FInts:OleVariant;
   ReceiveItemInfo:OleVariant;
-  sPatientName,sPatientAge,sPatientSex:string;
+  sPatientName,sPatientAge,sPatientSex,sCheckDate:string;
+  SpecType:string ;
+  s1,s2,s3:string;
+  d1:Double;
 begin
   if length(memo1.Lines.Text)>=60000 then memo1.Lines.Clear;//memo只能接受64K个字符
   memo1.Lines.Add(Str);
 
   ls:=TStringList.Create;
-  ExtractStrings([#$D,#$A],[],Pchar(Str),ls);//将每行导入到字符串列表中//？？？All lines are terminated by CRLF
+  ExtractStrings([#$D,#$A],[],Pchar(Str),ls);//将每行导入到字符串列表中
 
   for i :=0 to ls.Count-1 do
   begin
-    if leftstr(ls[i],13)='Patient Name:' then sPatientName:=copy(ls[i],14,MaxInt);
-    if leftstr(ls[i],12)='Patient Age:' then sPatientAge:=copy(ls[i],13,MaxInt);
-    if leftstr(ls[i],12)='Patient Sex:' then sPatientSex:=copy(ls[i],13,MaxInt);
+    if leftstr(ls[i],13)='Patient Name:' then sPatientName:=trim(copy(ls[i],14,MaxInt));
+    if sPatientName='n/a' then sPatientName:=''; 
+    if leftstr(ls[i],12)='Patient Age:' then sPatientAge:=trim(copy(ls[i],13,MaxInt));
+    if leftstr(ls[i],12)='Patient Sex:' then sPatientSex:=trim(copy(ls[i],13,MaxInt));
+    
+    if leftstr(ls[i],12)='Sample Type:' then SpecType:=trim(copy(ls[i],13,MaxInt));
+    if leftstr(ls[i],16)='Test start time:' then sCheckDate:=trim(copy(ls[i],17,MaxInt));
 
-    if leftstr(ls[i],12)='Specimen ID:' then SpecNo:=copy(ls[i],13,MaxInt);
-    if leftstr(ls[i],9)='Assay ID:' then dlttype:=copy(ls[i],10,MaxInt);
+    if leftstr(ls[i],12)='Specimen ID:' then SpecNo:=rightstr('0000'+trim(copy(ls[i],13,MaxInt)),4);
+    if leftstr(ls[i],10)='Test name:' then dlttype:=trim(copy(ls[i],11,MaxInt));
 
-    sValue:=trim(copy(ls[i],12,11));
+    m:=pos(':',ls[i]);
+    if m>0 then
+    begin
+      s1:=leftstr(ls[i],m);//键
+      if pos(dlttype,s1)>0 then//结果行
+      begin
+        s2:=copy(ls[i],m+1,MaxInt);//结果
+        sValue:=s2;
+        sValue:=stringreplace(sValue,'pg/ml','',[rfReplaceAll,rfIgnoreCase]);
+        sValue:=stringreplace(sValue,'ng FEU/ml','',[rfReplaceAll,rfIgnoreCase]);
+        sValue:=stringreplace(sValue,'ng/ml','',[rfReplaceAll,rfIgnoreCase]);
+        sValue:=stringreplace(sValue,'↑','',[rfReplaceAll,rfIgnoreCase]);
+        sValue:=trim(sValue);
 
+        n:=pos('=',s2);
+        if n>0 then//CRP
+        begin
+          s3:=copy(s2,n+1,MaxInt);
+          if TryStrToFloatExt(PCHAR(s3),d1) then sValue:=floattostr(d1);
+        end;
+      end;
+    end;
   end;
   ls.Free;
 
@@ -499,7 +523,7 @@ begin
   if bRegister then
   begin
     FInts :=CreateOleObject('Data2LisSvr.Data2Lis');
-    FInts.fData2Lis(ReceiveItemInfo,(SpecNo),'',
+    FInts.fData2Lis(ReceiveItemInfo,(SpecNo),sCheckDate,
       (GroupName),(SpecType),(SpecStatus),(EquipChar),
       (CombinID),
       sPatientName+'{!@#}'+sPatientSex+'{!@#}{!@#}'+sPatientAge,
