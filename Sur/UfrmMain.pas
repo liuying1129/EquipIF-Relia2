@@ -501,6 +501,7 @@ begin
         sValue:=stringreplace(sValue,'pg/ml','',[rfReplaceAll,rfIgnoreCase]);
         sValue:=stringreplace(sValue,'ng FEU/ml','',[rfReplaceAll,rfIgnoreCase]);
         sValue:=stringreplace(sValue,'ng/ml','',[rfReplaceAll,rfIgnoreCase]);
+        sValue:=stringreplace(sValue,'mg/L','',[rfReplaceAll,rfIgnoreCase]);
         sValue:=stringreplace(sValue,'¡ü','',[rfReplaceAll,rfIgnoreCase]);
         sValue:=trim(sValue);
 
